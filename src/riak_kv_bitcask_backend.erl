@@ -49,8 +49,8 @@
 -include_lib("bitcask/include/bitcask.hrl").
 
 -define(MERGE_CHECK_INTERVAL, timer:minutes(3)).
--define(MERGE_CHECK_JITTER, 30).
--define(UPGRADE_CHECK_INTERVAL, timer:minutes(1)).
+-define(MERGE_CHECK_JITTER, 0.3).
+-define(UPGRADE_CHECK_INTERVAL, timer:seconds(10)).
 -define(UPGRADE_MERGE_BATCH_SIZE, 5).
 -define(UPGRADE_FILE, "upgrade.txt").
 -define(MERGE_FILE, "merge.txt").
@@ -736,6 +736,7 @@ maybe_start_upgrade_if_bitcask_files(Dir) ->
                     end
             end;
         false ->
+            write_version(VersionFile, NewVsn),
             no_upgrade;
         {error, Err} ->
             lager:error("Failed to check for bitcask files in ~s."
